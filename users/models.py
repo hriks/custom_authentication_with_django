@@ -12,6 +12,9 @@ class User(models.Model):
     password = models.CharField(max_length=128)
 
     def save(self, *args, **kwargs):
+        """ Call Save method Update Hashed password, when password is changed
+        form admin or by user.
+        """
         try:
             current = User.objects.get(id=self.id)
             if (current.password != str(self.password)):
@@ -40,19 +43,24 @@ class User(models.Model):
 
     @classmethod
     def validateUser(cls, request):
+        """ This class method validate users form when he tries to login
+        return accessToken will be saved in session.
+        """
         data = request.POST.dict()
         try:
-            user = User.objects.get(username=data.get('username', ''))
+            user = cls.objects.get(username=data.get('username', ''))
             validated = user.check_password(data.get('password', ''))
             if validated:
                 return user.accessToken(), "Hi %s!. You had been successfully authenticated." % user.username
             return None, "Invalid Password Provided."
-        except User.DoesNotExist:
+        except cls.DoesNotExist:
             return None, 'Invalid Username Provided.'
         return None, 'Something went wrong! Please try again.'
 
     @classmethod
     def getAuthenticatedUser(cls, request):
+        """ Decorator uses this method to get authenticated user
+        """
         try:
             data = json.loads(request.session['authToken'])
             return cls.objects.get(username=data['username'])
@@ -60,10 +68,19 @@ class User(models.Model):
             return None
 
     def accessToken(self):
+        """ Generate the accessToken, currently using simple JSON.
+        JWT Token or any other strong algo can be used to generate
+        this accessToken
+        """
         return json.dumps({"username": self.username})
 
     @classmethod
     def createNew(cls, data):
+        """
+        Creates a new entry, when user tries to register
+        or raise an exception is duplication username is used
+        with some custom messgae
+        """
         try:
             kwargs = {
                 "username": data.get('username', ''),
