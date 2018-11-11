@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Custom | Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style type="text/css">
+        .btn-signin {
+            width: 45% !important;
+            display: inline-block;
+            margin-top: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <br>
+        {% if messages %}
+            {% if 'authToken' in request.session %}
+                <div class="alert alert-success">
+            {% else %}
+                <div class="alert alert-danger">
+            {% endif %}
+                    {% for message in messages %}
+                    <p style="text-align: center;">{{ message }}</p>
+                    {% endfor %}
+                </div>
+        {% endif %}
+        {% if 'authToken' in request.session %}
+            Hi {{user.username}}!. You are logged in. Click <a href="/logout/">here</a> to <a href="/logout/">Logout</a>
+        {% else %}
+            <div class="card card-container" style="width: 40%;">
+                <p id="profile-name" class="profile-name-card">Custom Login</p>
+                <form class="form-signin" action="{% url 'loginPage' %}" method="post">
+                    {% csrf_token %}
+                    <span id="reauth-email" class="reauth-email"></span>
+                    <label>Username</label>
+                    <input type="text" name="username" id="inputEmail" class="form-control" placeholder="Username" required autofocus>
+                    <label>Password</label>
+                    <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                    <br>
+                    <button class="btn btn-lg btn-primary btn-block btn-signin pointer" type="submit">Sign in</button>
+                    <button class="btn btn-lg btn-primary btn-block btn-signin pointer" type="button" onclick="window.location='/register'">Register</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
