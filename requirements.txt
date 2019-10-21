@@ -9,7 +9,7 @@ cffi==1.11.5
 chardet==3.0.4
 cryptography==2.3
 decorator==4.3.0
-Django==1.11.15
+Django==1.11.23
 django-filter==1.0.4
 django-rest-framework==0.1.0
 django-smtp-ssl==1.0
